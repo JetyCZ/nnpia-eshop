@@ -1,6 +1,5 @@
-package ui
+package cz.upce.eshop.ui;
 
-import cz.upce.eshop.EshopApplication;
 import cz.upce.eshop.datafactory.Creator;
 import cz.upce.eshop.entity.Product;
 import cz.upce.eshop.repository.ProductRepository;
@@ -12,21 +11,23 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import java.io.File;
+import java.net.MalformedURLException;
 
-@SpringBootTest(classes = EshopApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Import(Creator.class)
 public class ProductUITest {
 
-    private WebDriver driver;
-
     @LocalServerPort
     private int localServerPort;
+
+    private WebDriver driver;
 
     @Autowired
     ProductRepository productRepository;
@@ -55,6 +56,38 @@ public class ProductUITest {
     }
 
     @Test
+    public void addProductTest() {
+
+        singleProductAddTest();
+
+    }
+
+    @Test
+    public void addProductTest2() {
+
+        singleProductAddTest();
+
+    }
+
+
+    private void singleProductAddTest() {
+        driver.get("http://localhost:" + localServerPort + "/product-form");
+        driver.findElement(By.id("productName")).sendKeys("Hvězda");
+        def starPath = this.getClass().getResource("/img/star.png").getFile()
+        try {
+            driver.findElement(By.id("image")).sendKeys(starPath);
+        } catch (Exception e) {
+            // On Windows, starPath is like /C:/somedirectory/... which cannot be set into file input
+            driver.findElement(By.id("image")).sendKeys(starPath.substring(1));
+        }
+        driver.findElement(By.xpath("//input[@type='submit']")).click();
+
+        Assert.assertEquals(1, driver.findElements(By.xpath("//h2[text()='Product list']")).size());
+
+        Assert.assertEquals(1, driver.findElements(By.xpath("//h3[text()='Hvězda']")).size());
+    }
+
+    @Test
     public void productList() {
 
         creator.saveEntities(
@@ -72,5 +105,4 @@ public class ProductUITest {
 
 
     }
-
 }
