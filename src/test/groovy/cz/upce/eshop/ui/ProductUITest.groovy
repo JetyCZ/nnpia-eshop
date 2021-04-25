@@ -81,13 +81,19 @@ public class ProductUITest {
 
     private void singleProductAddTest() {
         driver.get("http://localhost:" + localServerPort + "/product-form");
-        driver.findElement(By.id("productName")).sendKeys("nůžky");
-        driver.findElement(By.id("image")).sendKeys("c:\\Users\\zuzka\\Pictures\\stažený soubor.png");
+        driver.findElement(By.id("productName")).sendKeys("Hvězda");
+        def starPath = this.getClass().getResource("/img/star.png").getFile()
+        try {
+            driver.findElement(By.id("image")).sendKeys(starPath);
+        } catch (Exception e) {
+            // On Windows, starPath is like /C:/somedirectory/... which cannot be set into file input
+            driver.findElement(By.id("image")).sendKeys(starPath.substring(1));
+        }
         driver.findElement(By.xpath("//input[@type='submit']")).click();
 
         Assert.assertEquals(1, driver.findElements(By.xpath("//h2[text()='Product list']")).size());
 
-        Assert.assertEquals(1, driver.findElements(By.xpath("//h3[text()='nůžky']")).size());
+        Assert.assertEquals(1, driver.findElements(By.xpath("//h3[text()='Hvězda']")).size());
     }
 
     @Test
