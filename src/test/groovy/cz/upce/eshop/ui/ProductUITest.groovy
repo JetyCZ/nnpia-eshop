@@ -78,6 +78,7 @@ public class ProductUITest {
             driver.findElement(By.id("image")).sendKeys(starPath);
         } catch (Exception e) {
             // On Windows, starPath is like /C:/somedirectory/... which cannot be set into file input
+            // So let's remove leading '/'
             driver.findElement(By.id("image")).sendKeys(starPath.substring(1));
         }
         driver.findElement(By.xpath("//input[@type='submit']")).click();
