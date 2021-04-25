@@ -39,11 +39,19 @@ public class ProductUITest {
     public static void setupWebdriverChromeDriver() {
         String chromedriverPath =  ProductUITest.class.getResource("/chromedriver.exe").getFile();
         System.setProperty("webdriver.chrome.driver", chromedriverPath);
+
+        String circleCIChromedriverPath = "/usr/local/bin/chromedriver"
+        if (new File(circleCIChromedriverPath).exists()) {
+            System.setProperty("webdriver.chrome.driver", circleCIChromedriverPath);
+        }
     }
 
     @BeforeEach
     public void setup() {
-        driver = new ChromeDriver();
+        ChromeOptions chromeOptions = new ChromeOptions()
+        chromeOptions.setHeadless(true)
+
+        driver = new ChromeDriver(chromeOptions);
         productRepository.deleteAll();
 
     }
