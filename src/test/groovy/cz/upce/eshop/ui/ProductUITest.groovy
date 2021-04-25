@@ -37,22 +37,13 @@ public class ProductUITest {
 
     @BeforeAll
     public static void setupWebdriverChromeDriver() {
-
-        String chromedriverPath = ProductUITest.class.getResource("/chromedriver.exe").getFile();
+        String chromedriverPath =  ProductUITest.class.getResource("/chromedriver.exe").getFile();
         System.setProperty("webdriver.chrome.driver", chromedriverPath);
-
-        String circleCIChromedriverPath = "/usr/local/bin/chromedriver";
-        if (new File(circleCIChromedriverPath).exists()) {
-            System.setProperty("webdriver.chrome.driver", circleCIChromedriverPath);
-        }
     }
 
     @BeforeEach
-    public void setup() throws MalformedURLException {
-
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.setHeadless(true);
-        driver = new ChromeDriver(chromeOptions);
+    public void setup() {
+        driver = new ChromeDriver();
         productRepository.deleteAll();
 
     }
@@ -87,6 +78,7 @@ public class ProductUITest {
             driver.findElement(By.id("image")).sendKeys(starPath);
         } catch (Exception e) {
             // On Windows, starPath is like /C:/somedirectory/... which cannot be set into file input
+            // So let's remove leading '/'
             driver.findElement(By.id("image")).sendKeys(starPath.substring(1));
         }
         driver.findElement(By.xpath("//input[@type='submit']")).click();
