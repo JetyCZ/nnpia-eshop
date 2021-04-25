@@ -1,6 +1,7 @@
 package cz.upce.eshop.ui;
 
 import cz.upce.eshop.datafactory.Creator;
+import cz.upce.eshop.entity.Product;
 import cz.upce.eshop.repository.ProductRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
@@ -52,22 +53,6 @@ public class ProductUITest {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.setHeadless(true);
         driver = new ChromeDriver(chromeOptions);
-
-        /*
-
-            driver = new RemoteWebDriver(
-                    new URL("http://localhost:4444/wd/hub"), DesiredCapabilities.chrome()
-            );
-
-         */
-
-/*
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setJavascriptEnabled(true);
-        caps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, "c:\\Users\\zuzka\\IdeaProjects\\nnpia-eshop-clone\\nnpia-eshop\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");
-        caps.setCapability("takesScreenshot", true);
-        PhantomJSDriver driver = new PhantomJSDriver(caps);
-*/
         productRepository.deleteAll();
 
     }
@@ -103,5 +88,24 @@ public class ProductUITest {
         Assert.assertEquals(1, driver.findElements(By.xpath("//h2[text()='Product list']")).size());
 
         Assert.assertEquals(1, driver.findElements(By.xpath("//h3[text()='nůžky']")).size());
+    }
+
+    @Test
+    public void productList() {
+
+        creator.saveEntities(
+                new Product(productName: "product1"),
+                new Product(productName: "product2"),
+                new Product(productName: "product3"),
+        )
+
+        driver.get("http://localhost:" + localServerPort + "/");
+
+        Assert.assertEquals(1, driver.findElements(By.xpath("//h3[text()='product1']")).size());
+        Assert.assertEquals(1, driver.findElements(By.xpath("//h3[text()='product2']")).size());
+        Assert.assertEquals(1, driver.findElements(By.xpath("//h3[text()='product3']")).size());
+
+
+
     }
 }
